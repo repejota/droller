@@ -15,15 +15,25 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-package main
+package droller
 
 import (
-	log "github.com/sirupsen/logrus"
+	"fmt"
 
-	"github.com/repejota/droller"
+	log "github.com/sirupsen/logrus"
 )
 
-func main() {
-	log.SetLevel(log.DebugLevel)
-	droller.Main()
+// Main ...
+func Main() {
+	dockerClient := NewDockerClient()
+	dockerClient.Connect()
+	defer dockerClient.DisConnect()
+
+	images, err := dockerClient.Images()
+	if err != nil {
+		log.Error(err)
+	}
+
+	log.Info("docker-roller report")
+	fmt.Println(images)
 }
