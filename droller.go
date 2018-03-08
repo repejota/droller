@@ -36,11 +36,7 @@ func Main() {
 		log.Error(err)
 	}
 
-	containers, err := dockerClient.Containers()
-	if err != nil {
-		log.Error(err)
-	}
-
+	log.Info("List Images")
 	w := tabwriter.NewWriter(os.Stdout, 0, 0, 3, ' ', 0)
 	fmt.Fprintf(w, "REPOSITORY\tTAG\tIMAGE ID\tCONTAINERS\n")
 	for _, image := range images {
@@ -58,6 +54,14 @@ func Main() {
 	}
 	w.Flush()
 
+	fmt.Println()
+
+	containers, err := dockerClient.Containers()
+	if err != nil {
+		log.Error(err)
+	}
+
+	log.Info("List Containers")
 	w = tabwriter.NewWriter(os.Stdout, 0, 0, 3, ' ', 0)
 	fmt.Fprintf(w, "CONTAINER ID\tIMAGE\n")
 	for _, container := range containers {

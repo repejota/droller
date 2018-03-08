@@ -62,7 +62,7 @@ func (d *DockerClient) DisConnect() {
 
 // Images ...
 func (d *DockerClient) Images() ([]types.ImageSummary, error) {
-	log.Debug("Get images")
+	log.Info("Get images")
 	options := types.ImageListOptions{
 		All: true,
 	}
@@ -70,6 +70,7 @@ func (d *DockerClient) Images() ([]types.ImageSummary, error) {
 	if err != nil {
 		log.Error(err)
 	}
+	log.Debugf("%d images/s", len(images))
 	return images, err
 }
 
@@ -95,7 +96,7 @@ func (d *DockerClient) ImageRepositoryTag(repoTag string) string {
 
 // Containers ...
 func (d *DockerClient) Containers() ([]types.Container, error) {
-	log.Debug("Get available containers")
+	log.Info("Get containers")
 	ctx := context.Background()
 	options := types.ContainerListOptions{}
 	containers, err := d.cli.ContainerList(ctx, options)
