@@ -40,7 +40,7 @@ cover-html: cover-profile	## Generate coverage report
 
 .PHONY: coveralls
 coveralls:	## Send coverage report to https://coveralls.io/github/repejota/droller
-	goveralls -repotoken xxx
+	goveralls -service circle-ci -repotoken 0voQEKR84xgNC69MAzeaykPGECp9V9htb
 
 # Lint
 
