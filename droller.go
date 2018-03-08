@@ -52,7 +52,10 @@ func Main() {
 		}
 
 	}
-	w.Flush()
+	err = w.Flush()
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	fmt.Println()
 
@@ -68,5 +71,8 @@ func Main() {
 		shortid := dockerClient.ContainerShortID(container.ID)
 		fmt.Fprintf(w, "%s\t%s\n", shortid, container.Image)
 	}
-	w.Flush()
+	err = w.Flush()
+	if err != nil {
+		log.Fatal(err)
+	}
 }

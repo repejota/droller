@@ -45,7 +45,13 @@ coveralls:	## Send coverage report to https://coveralls.io/github/repejota/drol
 # Lint
 
 lint:	## Lint source code
-	gometalinter --tests ./... --disable=gas
+	gometalinter \
+--disable=aligncheck \
+--disable=gotype \
+--disable=gas \
+--cyclo-over=20 \
+--tests \
+--deadline=20s
 
 # Dependencies
 
