@@ -27,6 +27,11 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+var (
+	// DefaultDockerAPIVersion ...
+	DefaultDockerAPIVersion = "1.35"
+)
+
 // DockerClient ...
 type DockerClient struct {
 	cli *client.Client
@@ -42,7 +47,7 @@ func NewDockerClient() *DockerClient {
 // Connect ...
 func (d *DockerClient) Connect() {
 	log.Debug("Conecting to server")
-	cli, err := client.NewEnvClient()
+	cli, err := client.NewClientWithOpts(client.WithVersion(DefaultDockerAPIVersion))
 	if err != nil {
 		log.Fatal("Can't connect to docker server", err)
 	}
@@ -83,15 +88,13 @@ func (d *DockerClient) ImageShortID(imageLongID string) string {
 // ImageRepositoryName ...
 func (d *DockerClient) ImageRepositoryName(repoTag string) string {
 	parts := strings.Split(repoTag, ":")
-	repository := string(parts[0])
-	return repository
+	return parts[0]
 }
 
 // ImageRepositoryTag ...
 func (d *DockerClient) ImageRepositoryTag(repoTag string) string {
 	parts := strings.Split(repoTag, ":")
-	tag := string(parts[1])
-	return tag
+	return parts[1]
 }
 
 // Containers ...
