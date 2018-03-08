@@ -22,6 +22,7 @@ import (
 	"strings"
 
 	"github.com/docker/docker/api/types"
+	"github.com/docker/docker/api/types/filters"
 	"github.com/docker/docker/client"
 	log "github.com/sirupsen/logrus"
 )
@@ -73,21 +74,54 @@ func (d *DockerClient) Images() ([]types.ImageSummary, error) {
 }
 
 // ImageShortID ...
-func ImageShortID(imageLongID string) string {
+func (d *DockerClient) ImageShortID(imageLongID string) string {
 	parts := strings.Split(imageLongID, ":")
 	return parts[1][:12]
 }
 
 // ImageRepositoryName ...
-func ImageRepositoryName(repoTag string) string {
+func (d *DockerClient) ImageRepositoryName(repoTag string) string {
 	parts := strings.Split(repoTag, ":")
 	repository := string(parts[0])
 	return repository
 }
 
 // ImageRepositoryTag ...
-func ImageRepositoryTag(repoTag string) string {
+func (d *DockerClient) ImageRepositoryTag(repoTag string) string {
 	parts := strings.Split(repoTag, ":")
 	tag := string(parts[1])
 	return tag
+}
+
+// Containers ...
+func (d *DockerClient) Containers() ([]types.Container, error) {
+	log.Debug("Get available containers")
+	ctx := context.Background()
+	options := types.ContainerListOptions{}
+	containers, err := d.cli.ContainerList(ctx, options)
+	if err != nil {
+		log.Error("Can't list containers", err)
+	}
+	log.Debugf("%d container/s", len(containers))
+	return containers, err
+}
+
+// ContainersByTag ...
+func (d *DockerClient) ContainersByTag() ([]types.Container, error) {
+	ctx := context.Background()
+	f := filters.NewArgs()
+	f.Add("type", "container")
+	options := types.ContainerListOptions{
+		Filters: f,
+	}
+	containers, err := d.cli.ContainerList(ctx, options)
+	if err != nil {
+		log.Error("Can't list containers", err)
+	}
+	return containers, err
+}
+
+// ContainerShortID ...
+func (d *DockerClient) ContainerShortID(containerLongID string) string {
+	return containerLongID[:12]
 }

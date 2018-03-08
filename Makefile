@@ -52,6 +52,7 @@ lint:	## Lint source code
 deps:	## Install package dependencies
 	go get -v -t -d -u github.com/docker/docker/client
 	go get -v -t -d -u github.com/sirupsen/logrus
+	go get -v -t -d -u github.com/spf13/cobra
 
 dev-deps:	## Install development dependencies
 	go get -v -t -u github.com/alecthomas/gometalinter
