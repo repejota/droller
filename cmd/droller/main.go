@@ -20,10 +20,11 @@ package main
 import (
 	log "github.com/sirupsen/logrus"
 
-	"github.com/repejota/droller"
+	"github.com/repejota/droller/cmd"
 )
 
 func main() {
 	log.SetLevel(log.DebugLevel)
-	droller.Main()
+
+	cmd.Execute()
 }
