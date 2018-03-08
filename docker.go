@@ -19,6 +19,7 @@ package droller
 
 import (
 	"context"
+	"strings"
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
@@ -42,7 +43,7 @@ func (d *DockerClient) Connect() {
 	log.Debug("Conecting to server")
 	cli, err := client.NewEnvClient()
 	if err != nil {
-		log.Error("Can't connect to docker server", err)
+		log.Fatal("Can't connect to docker server", err)
 	}
 	log.Debug("Conected to local docker server")
 	d.cli = cli
@@ -53,16 +54,40 @@ func (d *DockerClient) DisConnect() {
 	log.Debug("Disconecting from local docker server")
 	err := d.cli.Close()
 	if err != nil {
-		log.Error(err)
+		log.Fatal(err)
 	}
+	log.Debug("Disconnected")
 }
 
 // Images ...
 func (d *DockerClient) Images() ([]types.ImageSummary, error) {
-	options := types.ImageListOptions{}
+	log.Debug("Get images")
+	options := types.ImageListOptions{
+		All: true,
+	}
 	images, err := d.cli.ImageList(context.Background(), options)
 	if err != nil {
 		log.Error(err)
 	}
 	return images, err
+}
+
+// ImageShortID ...
+func ImageShortID(imageLongID string) string {
+	parts := strings.Split(imageLongID, ":")
+	return parts[1][:12]
+}
+
+// ImageRepositoryName ...
+func ImageRepositoryName(repoTag string) string {
+	parts := strings.Split(repoTag, ":")
+	repository := string(parts[0])
+	return repository
+}
+
+// ImageRepositoryTag ...
+func ImageRepositoryTag(repoTag string) string {
+	parts := strings.Split(repoTag, ":")
+	tag := string(parts[1])
+	return tag
 }

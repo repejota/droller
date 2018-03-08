@@ -19,6 +19,8 @@ package droller
 
 import (
 	"fmt"
+	"os"
+	"text/tabwriter"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -34,6 +36,19 @@ func Main() {
 		log.Error(err)
 	}
 
-	log.Info("docker-roller report")
-	fmt.Println(images)
+	w := tabwriter.NewWriter(os.Stdout, 0, 0, 3, ' ', 0)
+	fmt.Fprintf(w, "REPOSITORY\tTAG\tIMAGE ID\n")
+	for _, image := range images {
+		if len(image.RepoTags) > 0 {
+			for _, repotag := range image.RepoTags {
+				if repotag != "<none>:<none>" {
+					repository := ImageRepositoryName(repotag)
+					tag := ImageRepositoryTag(repotag)
+					fmt.Fprintf(w, "%s\t%s\t%s\n", repository, tag, ImageShortID(image.ID))
+				}
+			}
+		}
+
+	}
+	w.Flush()
 }
