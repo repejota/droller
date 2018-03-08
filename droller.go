@@ -36,19 +36,33 @@ func Main() {
 		log.Error(err)
 	}
 
+	containers, err := dockerClient.Containers()
+	if err != nil {
+		log.Error(err)
+	}
+
 	w := tabwriter.NewWriter(os.Stdout, 0, 0, 3, ' ', 0)
-	fmt.Fprintf(w, "REPOSITORY\tTAG\tIMAGE ID\n")
+	fmt.Fprintf(w, "REPOSITORY\tTAG\tIMAGE ID\tCONTAINERS\n")
 	for _, image := range images {
 		if len(image.RepoTags) > 0 {
 			for _, repotag := range image.RepoTags {
 				if repotag != "<none>:<none>" {
-					repository := ImageRepositoryName(repotag)
-					tag := ImageRepositoryTag(repotag)
-					fmt.Fprintf(w, "%s\t%s\t%s\n", repository, tag, ImageShortID(image.ID))
+					shortid := dockerClient.ImageShortID(image.ID)
+					repository := dockerClient.ImageRepositoryName(repotag)
+					tag := dockerClient.ImageRepositoryTag(repotag)
+					fmt.Fprintf(w, "%s\t%s\t%s\t%d\n", repository, tag, shortid, 0)
 				}
 			}
 		}
 
+	}
+	w.Flush()
+
+	w = tabwriter.NewWriter(os.Stdout, 0, 0, 3, ' ', 0)
+	fmt.Fprintf(w, "CONTAINER ID\tIMAGE\n")
+	for _, container := range containers {
+		shortid := dockerClient.ContainerShortID(container.ID)
+		fmt.Fprintf(w, "%s\t%s\n", shortid, container.Image)
 	}
 	w.Flush()
 }
